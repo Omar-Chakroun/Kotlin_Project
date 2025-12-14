@@ -10,28 +10,21 @@ import kotlinx.coroutines.flow.Flow
  */
 interface ProductRepository {
 
-    /**
-     * Retrieves all products as a Flow.
-     * @return A Flow emitting a list of all products.
-     */
     fun getAllProducts(): Flow<List<Product>>
 
-    /**
-     * Retrieves a single product by its ID.
-     * @param id The ID of the product to retrieve.
-     * @return A Flow emitting the product, or null if not found.
-     */
     fun getProductById(id: String): Flow<Product?>
 
-    /**
-     * Inserts or updates a product.
-     * @param product The product to be saved.
-     */
     suspend fun upsertProduct(product: Product)
 
-    /**
-     * Deletes a product.
-     * @param product The product to be deleted.
-     */
     suspend fun deleteProduct(product: Product)
+
+    /**
+     * Gets a real-time count of all products.
+     */
+    fun getTotalProductCount(): Flow<Int>
+
+    /**
+     * Gets the total value of all stock in real-time.
+     */
+    fun getTotalStockValue(): Flow<Double>
 }
