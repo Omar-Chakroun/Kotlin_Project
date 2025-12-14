@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.omar.smartshop.ui.products.ProductListScreen
+import com.omar.smartshop.navigation.AppNavHost
 import com.omar.smartshop.ui.theme.SmartShopTheme
 
 class MainActivity : ComponentActivity() {
@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         val app = application as SmartShopApplication
         setContent {
             SmartShopTheme {
-                ProductListScreen(application = app)
+                AppNavHost(application = app)
             }
         }
     }

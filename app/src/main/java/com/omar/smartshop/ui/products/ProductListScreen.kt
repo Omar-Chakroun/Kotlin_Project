@@ -1,5 +1,6 @@
 package com.omar.smartshop.ui.products
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx-compose.runtime.getValue
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,24 +31,36 @@ import com.omar.smartshop.data.model.Product
 import com.omar.smartshop.di.ViewModelFactory
 
 @Composable
-fun ProductListScreen(application: SmartShopApplication) {
+fun ProductListScreen(
+    application: SmartShopApplication,
+    onProductClick: (String) -> Unit,
+    onAddProductClick: () -> Unit
+) {
     val viewModel: ProductListViewModel = viewModel(
         factory = ViewModelFactory(application.appContainer.productRepository)
     )
     val uiState by viewModel.uiState.collectAsState()
 
-    ProductListScreenContent(uiState = uiState)
+    ProductListScreenContent(
+        uiState = uiState,
+        onProductClick = onProductClick,
+        onAddProductClick = onAddProductClick
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ProductListScreenContent(uiState: ProductListState) {
+private fun ProductListScreenContent(
+    uiState: ProductListState,
+    onProductClick: (String) -> Unit,
+    onAddProductClick: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(stringResource(id = R.string.app_name)) })
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /* TODO: Navigate to Add Product */ }) {
+            FloatingActionButton(onClick = onAddProductClick) {
                 Icon(painter = painterResource(id = android.R.drawable.ic_input_add), contentDescription = "Add Product")
             }
         }
@@ -66,7 +79,7 @@ private fun ProductListScreenContent(uiState: ProductListState) {
                     if (uiState.products.isEmpty()) {
                         Text("No products found. Add one!")
                     } else {
-                        ProductList(products = uiState.products)
+                        ProductList(products = uiState.products, onProductClick = onProductClick)
                     }
                 }
                 is ProductListState.Error -> {
@@ -78,16 +91,16 @@ private fun ProductListScreenContent(uiState: ProductListState) {
 }
 
 @Composable
-private fun ProductList(products: List<Product>) {
+private fun ProductList(products: List<Product>, onProductClick: (String) -> Unit) {
     LazyColumn {
         items(products) { product ->
-            ProductListItem(product = product)
+            ProductListItem(product = product, onProductClick = onProductClick)
         }
     }
 }
 
 @Composable
-private fun ProductListItem(product: Product) {
+private fun ProductListItem(product: Product, onProductClick: (String) -> Unit) {
     ListItem(
         headlineContent = { Text(product.name) },
         supportingContent = {
@@ -96,6 +109,8 @@ private fun ProductListItem(product: Product) {
                 Text("Quantity: ${product.quantity}")
             }
         },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onProductClick(product.id) }
     )
 }
